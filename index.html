@@ -515,10 +515,9 @@
 
 <script type="module">
 // 使用 CDN 連結以確保在瀏覽器中直接執行
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-// ✅ 修正：合併 Import，只保留這一行，確保有包含 increment
-import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, arrayUnion, collection, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, arrayUnion, collection, increment } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 // --- 1. Firebase 設定 ---
 const firebaseConfig = {
@@ -638,7 +637,7 @@ async function askOracle() {
 }
 
 // --- 新功能設定 ---
-const TOTAL_BG_IMAGES = 5; 
+const TOTAL_BG_IMAGES = 6; 
 
 // 1. 隨機背景函式
 function setRandomBackground() {
