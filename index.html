@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>霸王大老二 (Dictator Big Two)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700&family=Black+Ops+One&family=Cinzel+Decorative:wght@700&display=swap');
+        
+        /* Base Reset & Background */
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background: #0a0a0a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%231a1a1a' fill-opacity='0.4'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
+            color: #c0c0c0;
+            overflow: hidden;
+            touch-action: manipulation;
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            position: fixed;
+        }
+
+        .hidden { display: none !important; }
+
+        /* Royal Button Style */
+        .royal-btn {
+            background: linear-gradient(to bottom, #2a2a2a, #111111);
+            border: 2px solid #8b6f47;
+            box-shadow: 0 4px 0 #000, inset 0 1px 1px rgba(255,255,255,0.1), 0 0 10px rgba(139, 111, 71, 0.3);
+            color: #d4af37;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            font-family: 'Cinzel Decorative', cursive;
+            text-transform: uppercase;
+            transition: all 0.1s;
+            position: relative;
+            overflow: hidden;
+        }
+        .royal-btn::after {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.05), rgba(255,255,255,0)); pointer-events: none;
+        }
+        .royal-btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 1px 0 #000; }
+        .royal-btn:disabled { filter: grayscale(80%) brightness(0.7); opacity: 0.6; cursor: not-allowed; }
+
+        /* Red Royal Button for Exit/Pass */
+        .royal-btn-red {
+            border-color: #8b4747;
+            color: #d46a6a;
+            box-shadow: 0 4px 0 #000, inset 0 1px 1px rgba(255,255,255,0.1), 0 0 10px rgba(139, 71, 71, 0.3);
+        }
+        .royal-btn-red:active:not(:disabled) { box-shadow: 0 1px 0 #000; }
+
+        /* Green Royal Button for Tutorial */
+        .royal-btn-green {
+            border-color: #2d5a3c;
+            color: #4ade80;
+            box-shadow: 0 4px 0 #000, inset 0 1px 1px rgba(255,255,255,0.1), 0 0 10px rgba(45, 90, 60, 0.3);
+        }
+        
+        /* Difficulty Buttons */
+        .diff-btn {
+            flex: 1; padding: 15px; margin: 5px;
+            border: 1px solid #444; background: rgba(0,0,0,0.6);
+            text-align: center; transition: all 0.2s;
+            border-radius: 8px;
+        }
+        .diff-btn:hover { background: rgba(255,255,255,0.1); transform: scale(1.02); border-color: #d4af37; }
+        .diff-btn h4 { font-size: 1.2rem; color: #d4af37; margin-bottom: 4px; font-family: 'Cinzel Decorative'; }
+        .diff-btn p { font-size: 0.8rem; color: #aaa; }
+
+        /* Cover Screen */
+        /* 修改 CSS */
+	#cover-screen {
+    		/* 移除原本固定的 background: url(...) */
+    		background-color: #0a0a0a;
+    		background-repeat: no-repeat;
+    		background-position: center center;
+    		/* cover: 保持比例填滿 (會裁切邊緣) -> 推薦用於全螢幕背景 */
+    		/* contain: 保持比例完整顯示 (會留黑邊) -> 如果你絕對不想裁切請改用這個 */
+    		background-size: cover; 
+    		z-index: 100;
+    		box-shadow: inset 0 0 100px rgba(0,0,0,0.9);
+    		transition: background-image 1s ease-in-out; /* 讓圖片切換時有淡入效果 */
+	}
+        .title-text {
+            font-family: 'Cinzel Decorative', cursive;
+            color: #fcd34d;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.8), 0 0 30px rgba(252, 211, 77, 0.6);
+        }
+        .subtitle-text { color: #d4af37; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+
+        /* Lobby Styles */
+        #lobby-screen { background: rgba(0,0,0,0.95); z-index: 90; }
+        .room-input {
+            background: #1a1a1a; border: 2px solid #8b6f47; color: #d4af37;
+            font-family: 'Cinzel Decorative'; text-align: center; font-size: 1.5rem;
+            padding: 10px; width: 100%; border-radius: 8px; outline: none;
+        }
+        .player-list-item {
+            background: #222; border: 1px solid #444; padding: 10px; margin: 5px 0;
+            display: flex; justify-content: space-between; align-items: center;
+            border-radius: 4px;
+        }
+
+        /* Card Styles */
+        .card {
+            width: 70px; height: 100px;
+            background-color: #2c2c2c;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill='%23000000' fill-opacity='0.1'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z'/%3E%3C/g%3E%3C/svg%3E");
+            border-radius: 6px; border: 1px solid #555; color: #e0e0e0;
+            display: flex; flex-direction: column; justify-content: space-between; padding: 4px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5); font-weight: bold; font-size: 1.2rem;
+            cursor: pointer; transition: transform 0.2s; position: relative; user-select: none; flex-shrink: 0;
+        }
+        .card.selected { transform: translateY(-20px); border: 3px solid #d4af37; box-shadow: 0 0 15px #d4af37; z-index: 10; }
+        .card.red { color: #ff4d4d; }
+        .card.black { color: #ccc; }
+        
+        .card-back {
+            width: 40px; height: 56px;
+            background: repeating-linear-gradient(45deg, #1a1a1a, #1a1a1a 10px, #2a2a2a 10px, #2a2a2a 20px);
+            border-radius: 4px; border: 2px solid #8b6f47; margin-left: -20px; box-shadow: 1px 1px 3px rgba(0,0,0,0.6);
+        }
+
+        /* Layout */
+        .player-area { position: absolute; display: flex; flex-direction: column; align-items: center; z-index: 10; pointer-events: none; transition: all 0.5s ease; }
+        .player-area * { pointer-events: auto; }
+        .hand-container { display: flex; justify-content: center; align-items: center; }
+
+        #player-bottom { bottom: 20px; left: 50%; transform: translateX(-50%); width: 100%; }
+        #player-top { top: 20px; left: 50%; transform: translateX(-50%); }
+        #player-left { top: 50%; left: 40px; transform: translateY(-50%) rotate(90deg); }
+        #player-right { top: 50%; right: 40px; transform: translateY(-50%) rotate(-90deg); }
+        .player-info { font-family: 'Cinzel Decorative', cursive; color: #d4af37; text-shadow: 1px 1px 2px black; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+
+        /* History Panel */
+        #history-panel {
+            position: absolute; top: 15px; right: 15px; width: 180px; height: 300px;
+            background: rgba(10, 10, 10, 0.85); border: 1px solid #8b6f47;
+            border-radius: 8px; z-index: 80; display: flex; flex-direction: column;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.6); backdrop-filter: blur(2px);
+            transition: height 0.3s ease, opacity 0.3s ease;
+            overflow: hidden;
+        }
+        #history-panel.minimized {
+            height: 32px !important;
+            overflow: hidden;
+        }
+        .history-header {
+            background: linear-gradient(to right, #2a2a2a, #111);
+            color: #d4af37; font-family: 'Cinzel Decorative'; font-size: 0.85rem;
+            padding: 5px 10px; border-bottom: 1px solid #4a3f35; border-radius: 7px 7px 0 0; 
+            display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; user-select: none; height: 32px;
+        }
+        .history-header:hover { background: linear-gradient(to right, #333, #222); }
+        
+        .history-content {
+            flex: 1; overflow-y: auto; padding: 5px; font-size: 0.75rem; color: #ccc;
+            font-family: 'Noto Sans TC'; scrollbar-width: thin;
+        }
+        .history-content::-webkit-scrollbar { width: 4px; }
+        .history-content::-webkit-scrollbar-thumb { background: #8b6f47; border-radius: 2px; }
+        .history-item { margin-bottom: 4px; border-bottom: 1px solid #333; padding-bottom: 2px; }
+        .hist-name { color: #fbbf24; font-weight: bold; margin-right: 4px; }
+        .hist-cards { letter-spacing: 1px; }
+        .hist-pass { color: #ef4444; font-style: italic; }
+        .hist-red { color: #ff6b6b; }
+        .hist-black { color: #9ca3af; }
+
+        .table-center {
+            position: absolute; top: 45%; left: 50%; transform: translate(-50%, -50%);
+            width: 300px; height: 180px;
+            background: rgba(20, 20, 20, 0.9); border-radius: 20px; border: 3px solid #8b6f47;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 10px; z-index: 5; pointer-events: none;
+        }
+        #turn-indicator { color: #a0aec0; font-family: 'Cinzel Decorative'; }
+        #last-action-text { color: #d4af37; font-weight: bold; text-shadow: 1px 1px 2px black; }
+
+        .played-cards { display: flex; margin-left: 20px; }
+        .played-cards .card { margin-left: -40px; cursor: default; }
+
+        /* HUD & Panels */
+        .royal-panel {
+            background: linear-gradient(to bottom, #1a1a1a, #0a0a0a); border: 3px solid #8b6f47;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 30px rgba(0,0,0,0.5); color: #d4af37;
+            font-family: 'Cinzel Decorative';
+        }
+        /* Top Left Toolbar */
+        .top-left-bar {
+            position: absolute; top: 20px; left: 20px;
+            display: flex; gap: 10px; z-index: 90;
+        }
+        
+        .rules-display {
+            position: absolute; top: 75px; left: 20px; /* Moved down */
+            background: rgba(20, 20, 20, 0.9); padding: 10px; border-radius: 8px; border: 2px solid #8b6f47;
+            z-index: 20; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .control-panel { margin-top: 15px; display: flex; gap: 15px; }
+        
+        /* MODAL STYLES */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); /* Low opacity */
+            display: flex; justify-content: center; align-items: center; z-index: 200;
+        }
+        
+        .mode-btn {
+            padding: 10px; flex: 1; border-radius: 8px; font-weight: bold; cursor: pointer;
+            transition: all 0.2s; border: 2px solid #4a3f35; background: #2a2a2a; color: #8b6f47;
+            font-family: 'Cinzel Decorative';
+        }
+        .mode-btn.active { border-color: #d4af37; background: #111; color: #d4af37; box-shadow: 0 0 15px rgba(212, 175, 55, 0.3); }
+
+        .rank-seq-item { display: inline-block; margin: 0 2px; font-family: monospace; font-size: 1.1rem; color: #a0aec0; }
+        .rank-seq-item.boss { color: #d4af37; font-weight: bold; font-size: 1.3rem; text-decoration: underline; }
+
+        /* Animation Overlay */
+        #anim-overlay {
+            position: fixed; inset: 0; z-index: 150; pointer-events: none;
+            display: flex; justify-content: center; align-items: center;
+        }
+        .anim-text {
+            font-family: 'Black Ops One', system-ui; font-size: 6rem;
+            opacity: 0; transform: scale(3);
+            text-shadow: 0 0 30px black;
+            animation: text-enter 0.6s cubic-bezier(0.17, 0.67, 0.83, 0.67) forwards;
+        }
+        .anim-text.win { color: #ffd700; text-shadow: 0 0 50px #ffd700; }
+        .anim-text.lose { color: #888; text-shadow: 0 0 30px #000; }
+        @keyframes text-enter { to { opacity: 1; transform: scale(1); } }
+
+        /* Winner Styles */
+        .winner-anim {
+            animation: winner-pulse 2s infinite;
+            z-index: 100 !important;
+        }
+        @keyframes winner-pulse {
+            0% { filter: drop-shadow(0 0 5px gold); transform: scale(1); }
+            50% { filter: drop-shadow(0 0 30px gold); transform: scale(1.1); }
+            100% { filter: drop-shadow(0 0 5px gold); transform: scale(1); }
+        }
+
+        /* Loser Styles */
+        .loser-anim {
+            animation: loser-fall 1.5s forwards ease-in;
+            filter: grayscale(100%) brightness(0.5);
+        }
+        @keyframes loser-fall {
+            0% { transform: translateY(0) rotate(0deg); }
+            20% { transform: translateY(-30px) rotate(-5deg); }
+            100% { transform: translateY(120vh) rotate(20deg); opacity: 0; }
+        }
+        
+        /* Gemini Oracle / Commentary Box */
+        #gemini-toast {
+            position: fixed; bottom: 100px; left: 20px; max-width: 250px;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            border: 1px solid #9f7aea; /* Purple border for magic */
+            border-radius: 8px; padding: 12px; z-index: 120;
+            box-shadow: 0 0 15px rgba(159, 122, 234, 0.3);
+            font-family: 'Noto Sans TC'; font-size: 0.9rem; color: #e9d8fd;
+            opacity: 0; transform: translateY(20px); transition: all 0.5s ease;
+            pointer-events: none;
+        }
+        #gemini-toast.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+        .gemini-title { font-weight: bold; color: #d6bcfa; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+
+        /* Mobile Landscape */
+        @media screen and (orientation: landscape) and (max-height: 500px) {
+            /* Move modal to top to avoid covering cards */
+            .modal {
+                align-items: flex-start;
+                padding-top: 10px;
+            }
+
+            .card { width: 48px; height: 72px; font-size: 0.9rem; padding: 2px; }
+            .card-back { width: 32px; height: 48px; margin-left: -20px; }
+            .played-cards .card { margin-left: -30px; }
+            #player-bottom { bottom: 5px; flex-direction: row; justify-content: center; align-items: flex-end; }
+            .hand-container { margin-bottom: 0; }
+            .control-panel { position: fixed; bottom: 15px; right: 20px; flex-direction: column; gap: 8px; margin-top: 0; z-index: 100; }
+            .control-panel button { padding: 8px 16px; font-size: 0.9rem; width: 110px; } 
+            #my-message { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 100%; text-align: center; z-index: 20; }
+            .table-center { top: 40%; width: 240px; height: 110px; }
+            #player-top { top: 5px; }
+            #player-left { left: 10px; transform: translateY(-60%) rotate(90deg) scale(0.9); }
+            #player-right { right: 10px; transform: translateY(-60%) rotate(-90deg) scale(0.9); }
+            
+            /* Adjust Top Left for Mobile */
+            .top-left-bar { top: 10px; left: 10px; gap: 5px; }
+            .top-left-bar button { padding: 4px 10px; font-size: 0.8rem; }
+            .rules-display { top: 50px; left: 10px; padding: 6px; font-size: 0.75rem; }
+            
+            .title-text { font-size: 3.5rem; margin-bottom: 1.5rem; }
+            #history-panel { top: auto; bottom: 15px; right: 140px; width: 140px; height: 120px; }
+            #history-panel.minimized { height: 32px !important; }
+            
+            .anim-text { font-size: 4rem; }
+            #gemini-toast { bottom: 10px; left: 10px; max-width: 200px; font-size: 0.8rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Animation Overlay -->
+    <div id="anim-overlay"></div>
+    
+    <!-- Gemini Toast -->
+    <div id="gemini-toast">
+        <div class="gemini-title">✨ 皇家傳令 (Royal Herald)</div>
+        <div id="gemini-content">正在觀察戰局...</div>
+    </div>
+
+    <!-- Rotate Warning -->
+    <div id="rotate-warning" class="fixed inset-0 bg-slate-900 z-[10000] flex flex-col justify-center items-center text-amber-400 text-center p-5 hidden portrait:flex">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" class="w-16 h-16 mb-5 animate-spin-slow"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        <h2 class="text-2xl font-bold mb-2 font-['Cinzel_Decorative']">請旋轉您的裝置</h2>
+        <p class="text-gray-400">為了最佳遊戲體驗<br>請使用橫向模式遊玩</p>
+    </div>
+
+    <!-- Game Content -->
+    <div id="game-root" class="portrait:hidden">
+        
+        <!-- Cover Screen -->
+        <div id="cover-screen" class="fixed inset-0 flex flex-col items-center justify-center text-white">
+            <div class="mb-2 text-yellow-500 font-bold tracking-[0.5em] text-sm uppercase font-['Cinzel_Decorative'] subtitle-text">Dictator Big Two</div>
+            <h1 class="text-6xl md:text-8xl font-black mb-8 title-text text-center leading-tight">霸王<br>大老二</h1>
+            
+            <div class="flex flex-col md:flex-row gap-6 w-64 md:w-auto z-10 items-center justify-center">
+                <button onclick="showDifficultyModal('single')" class="royal-btn px-8 py-4 rounded-xl text-2xl font-bold">單人模式</button>
+                <button onclick="showDifficultyModal('multi')" class="royal-btn px-8 py-4 rounded-xl text-2xl font-bold" style="filter: hue-rotate(340deg) brightness(0.9);">多人連線</button>
+                <button onclick="openTutorial()" class="royal-btn royal-btn-green px-6 py-4 rounded-xl text-xl font-bold flex items-center gap-2">
+                   <span>🔰</span> 新手教學
+                </button>
+            </div>
+            <p class="mt-12 text-yellow-200 opacity-60 text-sm font-['Cinzel_Decorative'] subtitle-text">贏家即是規則 • 撐過這輪你就是王</p>
+	<div class="flex flex-col md:flex-row gap-6 w-64 md:w-auto z-10 items-center justify-center">
+    </div>
+
+<div class="mt-8 p-3 bg-black/40 border border-[#8b6f47] rounded-lg backdrop-blur-sm flex items-center gap-3 animate-pulse">
+    <span class="text-yellow-500 text-xl">👀</span>
+    <div class="flex flex-col items-start">
+        <span class="text-[#8b6f47] text-xs font-bold uppercase tracking-widest font-['Cinzel_Decorative']">Visitor Count</span>
+        <span id="visitor-count-display" class="text-yellow-400 font-bold text-lg font-['Black_Ops_One']">Loading...</span>
+    </div>
+</div>
+        </div>
+
+        <!-- Difficulty Modal -->
+        <div id="difficulty-modal" class="modal hidden">
+            <div class="royal-panel p-8 rounded-lg max-w-3xl w-full m-4 relative">
+                <button onclick="closeDifficultyModal()" class="absolute top-2 right-4 text-gray-400 hover:text-white text-2xl">&times;</button>
+                <h2 class="text-3xl font-bold mb-6 text-yellow-500 text-center font-['Cinzel_Decorative']">選擇 AI 強度</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <button onclick="selectDifficulty(0)" class="diff-btn">
+                        <h4>🐣 新手</h4><p>First Time</p><div class="text-xs text-gray-400 mt-2">隨機出牌，容易放水</div>
+                    </button>
+                    <button onclick="selectDifficulty(1)" class="diff-btn">
+                        <h4>🙂 一般</h4><p>Casual</p><div class="text-xs text-gray-400 mt-2">懂得基本規則</div>
+                    </button>
+                    <button onclick="selectDifficulty(2)" class="diff-btn">
+                        <h4>😎 老手</h4><p>Veteran</p><div class="text-xs text-gray-400 mt-2">懂得保留王牌控場</div>
+                    </button>
+                    <button onclick="selectDifficulty(3)" class="diff-btn">
+                        <h4>👑 大師</h4><p>Master</p><div class="text-xs text-gray-400 mt-2">侵略性極強，算牌</div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tutorial Modal -->
+        <div id="tutorial-modal" class="modal hidden">
+            <div class="royal-panel p-8 rounded-lg max-w-2xl w-full m-4 relative flex flex-col">
+                <button onclick="closeTutorial()" class="absolute top-2 right-4 text-gray-400 hover:text-white text-2xl">&times;</button>
+                <h2 class="text-2xl font-bold mb-4 text-green-400 font-['Cinzel_Decorative'] text-center">🔰 新手訓練營</h2>
+                
+                <div id="tutorial-content" class="flex-1 mb-6 min-h-[200px] flex flex-col items-center justify-center text-center"></div>
+
+                <div class="flex justify-between mt-auto pt-4 border-t border-gray-700">
+                    <button id="tut-prev" class="royal-btn py-2 px-4 rounded text-sm" onclick="prevTutorialStep()">上一步</button>
+                    <div id="tut-dots" class="flex gap-2 items-center"></div>
+                    <button id="tut-next" class="royal-btn py-2 px-4 rounded text-sm" onclick="nextTutorialStep()">下一步</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lobby Screen -->
+        <div id="lobby-screen" class="fixed inset-0 flex flex-col items-center justify-center text-white hidden">
+            <div class="royal-panel p-8 rounded-xl max-w-md w-full text-center relative">
+                <button onclick="exitLobby()" class="absolute top-2 left-4 text-gray-400 hover:text-white">&larr; 返回</button>
+                <h2 class="text-3xl font-bold mb-6 mt-4 text-yellow-500">連線大廳</h2>
+                
+                <div id="lobby-main" class="flex flex-col gap-4">
+                    <button onclick="showDifficultyModal('create_room')" class="royal-btn py-3 rounded text-xl">建立房間</button>
+                    <div class="flex gap-2">
+                        <input type="text" id="room-id-input" placeholder="輸入4位數房號" maxlength="4" class="room-input uppercase">
+                        <button onclick="joinRoom()" class="royal-btn px-4 rounded">加入</button>
+                    </div>
+                </div>
+
+                <div id="lobby-waiting" class="hidden flex-col gap-4">
+                    <div class="text-xl mb-2">房號: <span id="room-id-display" class="text-3xl font-bold text-yellow-400"></span></div>
+                    <div id="room-diff-display" class="text-sm text-gray-400">難度: ?</div>
+                    <div id="player-list" class="text-left bg-black/50 p-4 rounded"></div>
+                    <div id="host-controls" class="hidden flex flex-col gap-2 mt-4">
+                        <button onclick="addBot()" class="royal-btn py-2 text-sm border-gray-600">加入 AI 電腦</button>
+                        <button onclick="startMultiplayerGame()" class="royal-btn py-3 text-xl bg-green-900 border-green-600 text-green-400">開始遊戲</button>
+                    </div>
+                    <div id="guest-waiting" class="hidden mt-4 text-gray-400 animate-pulse">等待房主開始...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Left Controls -->
+        <div class="top-left-bar hidden" id="top-controls">
+            <button id="btn-exit" onclick="showExitModal()" class="royal-btn royal-btn-red !text-sm !py-2 !px-4 !rounded-lg !border-2">
+                🚪 退出
+            </button>
+            <button id="btn-open-help" onclick="openHelp()" class="royal-btn !text-sm !py-2 !px-4 !rounded-lg !border-2" style="filter: hue-rotate(340deg) brightness(0.9);">
+                📜 說明
+            </button>
+            <button id="btn-ask-oracle" onclick="askOracle()" class="royal-btn !text-sm !py-2 !px-4 !rounded-lg !border-2 border-purple-500 text-purple-300 shadow-[0_0_10px_rgba(168,85,247,0.4)]">
+                ✨ 神諭
+            </button>
+        </div>
+
+        <!-- Game HUD -->
+        <div class="rules-display hidden" id="game-hud">
+            <h3 class="text-gold font-bold mb-1 text-xs text-yellow-500 uppercase tracking-wider font-['Cinzel_Decorative']">Current Rules</h3>
+            <div id="current-rule-text" class="text-sm font-['Cinzel_Decorative']">最大: <span class="text-yellow-400 text-xl font-bold">2</span> / <span class="text-blue-400 text-xl font-bold">♠</span></div>
+            <div id="game-status" class="mt-2 text-xs text-gray-300 hidden md:block font-['Cinzel_Decorative']">等待開始...</div>
+        </div>
+
+        <!-- History Panel -->
+        <div id="history-panel" class="hidden">
+            <div class="history-header" onclick="toggleHistory()">
+                <span>📜 戰況紀錄</span>
+                <span id="hist-toggle-icon">▼</span>
+            </div>
+            <div id="history-content" class="history-content"></div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-center hidden" id="table-area">
+            <div class="text-sm mb-2" id="turn-indicator">出牌區</div>
+            <div class="played-cards" id="table-cards"></div>
+            <div id="last-action-text" class="mt-2 font-bold"></div>
+        </div>
+
+        <!-- Players -->
+        <div id="player-top" class="player-area hidden"><div class="player-info text-xs"><span class="name">Top</span> <span class="count text-gray-400 ml-1">13</span></div><div class="hand-container" id="hand-top"></div></div>
+        <div id="player-left" class="player-area hidden"><div class="player-info text-xs"><span class="name">Left</span> <span class="count text-gray-400 ml-1">13</span></div><div class="hand-container" id="hand-left"></div></div>
+        <div id="player-right" class="player-area hidden"><div class="player-info text-xs"><span class="name">Right</span> <span class="count text-gray-400 ml-1">13</span></div><div class="hand-container" id="hand-right"></div></div>
+
+        <!-- My Player -->
+        <div id="player-bottom" class="player-area hidden">
+            <div id="my-message" class="text-yellow-300 font-bold h-6 font-['Cinzel_Decorative']"></div>
+            <div class="hand-container" id="my-hand"></div>
+            <div class="control-panel">
+                <button id="btn-play" class="royal-btn py-2 px-6 rounded-lg font-bold">出牌</button>
+                <button id="btn-pass" class="royal-btn py-2 px-6 rounded-lg font-bold" style="filter: hue-rotate(340deg) brightness(0.9);">PASS</button>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div id="rule-modal" class="modal hidden">
+            <div class="royal-panel p-6 rounded-lg max-w-md w-full text-center m-4">
+                <h2 class="text-2xl font-bold mb-2">👑 霸王時刻！</h2>
+                <div class="flex gap-4 mb-4">
+                    <button id="mode-rank" class="mode-btn active" onclick="setMode('rank')">改數字</button>
+                    <button id="mode-suit" class="mode-btn" onclick="setMode('suit')">改花色</button>
+                </div>
+                <div id="panel-rank" class="mb-4"><div class="grid grid-cols-7 gap-2" id="rank-selector"></div></div>
+                <div id="panel-suit" class="mb-6 hidden"><div class="flex justify-center gap-4" id="suit-selector"></div></div>
+                <button id="btn-confirm-rule" class="royal-btn w-full py-3 rounded-lg font-bold">確認規則</button>
+            </div>
+        </div>
+
+        <div id="help-modal" class="modal hidden" onclick="closeHelp()">
+            <div class="royal-panel p-6 rounded-lg max-w-lg w-full relative shadow-2xl overflow-y-auto max-h-[90vh] m-4" onclick="event.stopPropagation()">
+                <button onclick="closeHelp()" class="absolute top-2 right-4 text-yellow-500 hover:text-white text-2xl">&times;</button>
+                <h2 class="text-xl font-bold mb-4 border-b border-yellow-700 pb-2">📜 規則</h2>
+                <div class="mb-4"><h3 class="text-yellow-400 font-bold text-sm mb-1">數字順序</h3><div id="help-rank-order" class="text-gray-300 bg-gray-900 p-2 rounded text-sm border border-yellow-800"></div></div>
+                <div class="mb-4"><h3 class="text-blue-400 font-bold text-sm mb-1">花色順序</h3><div id="help-suit-order" class="text-gray-300 bg-gray-900 p-2 rounded flex justify-around text-xl border border-yellow-800"></div></div>
+            </div>
+        </div>
+
+        <!-- Exit Confirmation Modal -->
+        <div id="exit-modal" class="modal hidden">
+            <div class="royal-panel p-8 rounded-lg text-center m-4 max-w-sm w-full">
+                <h2 class="text-2xl font-bold mb-4 text-red-400">⚠️ 退出遊戲</h2>
+                <p class="mb-6 text-gray-300">您確定要離開目前的牌局嗎？<br><span class="text-xs text-gray-500">(進度將不會保存)</span></p>
+                <div class="flex gap-4 justify-center">
+                    <button onclick="confirmExit()" class="royal-btn royal-btn-red py-2 px-6 rounded-lg font-bold">確定離開</button>
+                    <button onclick="closeExitModal()" class="royal-btn py-2 px-6 rounded-lg font-bold">取消</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-modal" class="modal hidden">
+            <div class="royal-panel p-8 rounded-lg text-center m-4">
+                <h2 id="result-title" class="text-3xl font-bold mb-4">遊戲結束</h2>
+                <p id="result-message" class="mb-6 text-lg text-white"></p>
+                <button onclick="location.reload()" class="royal-btn py-3 px-8 rounded-lg font-bold">回到封面</button>
+            </div>
+        </div>
+    </div>
+
+<script type="module">
+// 使用 CDN 連結以確保在瀏覽器中直接執行
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+// ✅ 修正：合併 Import，只保留這一行，確保有包含 increment
+import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, arrayUnion, collection, increment } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+// --- 1. Firebase 設定 ---
+const firebaseConfig = {
+  apiKey: "AIzaSyB6UPhyM3Yczo4HjpyXSvih83lS5vf6KiI",
+  authDomain: "trumpbigdick-ab9d6.firebaseapp.com",
+  projectId: "trumpbigdick-ab9d6",
+  storageBucket: "trumpbigdick-ab9d6.firebasestorage.app",
+  messagingSenderId: "868980385396",
+  appId: "1:868980385396:web:80ad31f76c9c284a5fd321"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const appId = 'dictator-big2-v1'; // 設定一個固定的 App ID
+
+// --- 變數宣告 ---
+let myUid = null;
+let currentRoomId = null;
+let unsubscribeRoom = null;
+let isHost = false;
+let isMultiplayer = false;
+let gameData = null; 
+let gameHistory = []; 
+let hasShownFinishAnim = false; 
+let pendingAction = null;
+let selectedDifficulty = 1; 
+
+// 遊戲常數
+const SUITS = ['♦', '♣', '♥', '♠'];
+const RANKS = ['3','4','5','6','7','8','9','10','J','Q','K','A','2'];
+let bossRankIndex = 12; // 2
+let bossSuitIndex = 3; // Spade
+const DIFF_LABELS = ["新手", "一般", "老手", "大師"];
+
+// UI 狀態
+let ui = {};
+let selectedIndices = new Set();
+let selectedMode = 'rank';
+let tempRuleRank = 12;
+let tempRuleSuit = 3;
+let tutorialStep = 0;
+
+// --- Gemini API 整合 ---
+async function callGeminiCommentary(promptType, context) {
+    let sysPrompt = "You are a dramatic Royal Herald in a card game called 'Dictator Big Two'. Speak in Traditional Chinese. Keep it short (under 20 chars). Be witty, regal, or mocking.";
+    let userPrompt = "";
+
+    if (promptType === 'rule_change') {
+        userPrompt = `The Dictator has changed the rules! New Boss Rank: ${RANKS[context.rank]}, New Boss Suit: ${SUITS[context.suit]}. React to this decree.`;
+    } else if (promptType === 'big_play') {
+        userPrompt = `A player just played a powerful hand: ${context.pattern} (${context.cards}). Praise their strength!`;
+    } else if (promptType === 'oracle') {
+        sysPrompt += " You are a wise Oracle giving strategy advice. Be mystical.";
+        userPrompt = `My hand: ${context.hand}. Current Rules: Rank ${RANKS[context.rules.rank]} is high, Suit ${SUITS[context.rules.suit]} is high. Suggest a move.`;
+    }
+
+    const fullPrompt = sysPrompt + " " + userPrompt;
+
+    try {
+        const response = await fetch('/api/gemini', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: fullPrompt })
+        });
+
+        if (!response.ok) throw new Error('Backend API Error');
+
+        const data = await response.json();
+        const text = data.candidates?.[0]?.content?.parts?.[0]?.text || "沉默...";
+        showGeminiToast(text, promptType === 'oracle');
+
+    } catch (e) {
+        console.warn("API Failed, switching to Mock Mode", e);
+        const mockText = getMockCommentary(promptType, context);
+        showGeminiToast(mockText, promptType === 'oracle');
+    }
+}
+
+function getMockCommentary(type, context) {
+    const rName = RANKS[context.rank] || '';
+    const sName = SUITS[context.suit] || '';
+    if (type === 'rule_change') {
+        const lines = [`吾皇萬歲！現在起 ${rName} 是老大！`, `規則已變！${sName} 花色稱霸天下！`, `聽令！誰敢不從 ${rName}，斬立決！`];
+        return lines[Math.floor(Math.random() * lines.length)];
+    } else if (type === 'big_play') {
+        const lines = [`天啊！這是傳說中的 ${context.pattern}！`, `如此強大的牌型，簡直是毀滅性打擊！`];
+        return lines[Math.floor(Math.random() * lines.length)];
+    } else if (type === 'oracle') {
+        const lines = [`忍一時風平浪靜，不如 Pass 吧。`, `進攻是最好的防守，打出你最大的牌！`];
+        return lines[Math.floor(Math.random() * lines.length)];
+    }
+    return "...";
+}
+
+function showGeminiToast(text, isOracle=false) {
+    const toast = document.getElementById('gemini-toast');
+    const content = document.getElementById('gemini-content');
+    const title = toast.querySelector('.gemini-title');
+    title.innerText = isOracle ? "✨ 命運神諭 (Oracle)" : "✨ 皇家傳令 (Royal Herald)";
+    content.innerText = text;
+    toast.classList.add('show');
+    setTimeout(() => { toast.classList.remove('show'); }, isOracle ? 8000 : 5000);
+}
+
+async function askOracle() {
+    if (!gameActive) return;
+    const myIndex = isMultiplayer ? gameData.players.findIndex(p=>p.uid===myUid) : 0;
+    if (isMultiplayer && gameData.currentPlayer !== myIndex && gameData.status === 'playing') {
+        showGeminiToast("現在不是你的回合，神諭保持沉默。", true);
+        return;
+    }
+    const hand = isMultiplayer ? gameData.players[myIndex].hand : players[0];
+    const handStr = hand.map(c => `${SUITS[c.suit]}${RANKS[c.rankIndex]}`).join(',');
+    showGeminiToast("正在聆聽神諭...", true);
+    await callGeminiCommentary('oracle', { hand: handStr, rules: { rank: bossRankIndex, suit: bossSuitIndex } });
+}
+
+// --- 新功能設定 ---
+const TOTAL_BG_IMAGES = 5; 
+
+// 1. 隨機背景函式
+function setRandomBackground() {
+    const randomNum = Math.floor(Math.random() * TOTAL_BG_IMAGES) + 1;
+    const formattedNum = String(randomNum).padStart(3, '0');
+    const imageName = `image_${formattedNum}.png`;
+    const cover = document.getElementById('cover-screen');
+    cover.style.backgroundImage = `url('${imageName}')`;
+    console.log(`已設定背景圖: ${imageName}`);
+}
+
+// 2. 訪客計數器函式
+async function initVisitorCounter() {
+    const counterDisplay = document.getElementById('visitor-count-display');
+    const counterRef = doc(db, 'artifacts', appId, 'metrics', 'visitors');
+    try {
+        await setDoc(counterRef, { count: increment(1) }, { merge: true });
+        const docSnap = await getDoc(counterRef);
+        if (docSnap.exists()) {
+            const count = docSnap.data().count;
+            counterDisplay.innerText = count.toLocaleString();
+        }
+    } catch (e) {
+        console.error("計數器錯誤:", e);
+        counterDisplay.innerText = "----";
+    }
+}
+
+// --- Tutorial Logic ---
+const tutorialSteps = [
+    { title: "1. 基礎規則", content: `<p class="mb-4 text-lg">霸王大老二的基礎規則與傳統大老二相同：</p><ul class="text-left list-disc pl-6 space-y-2 text-gray-300"><li>持有 <span class="text-white font-bold">♣3</span> 的玩家先出牌。</li><li>目標是將手中的 13 張牌全部打完。</li><li>牌型大小：同花順 > 鐵支 > 葫蘆 > 同花 > 順子 > 對子 > 單張。</li></ul>` },
+    { title: "2. 霸王降臨", content: `<p class="mb-4 text-lg">這才是重點！</p><p class="mb-4 text-gray-300">當你打出的牌<span class="text-yellow-400 font-bold">無人能擋</span>（其他三家都 Pass）時，你就贏得了這一墩，並成為下一輪的<span class="text-red-500 font-bold text-xl">霸王</span>！</p><div class="p-4 bg-gray-800 rounded border border-yellow-600 inline-block">👑 霸王權力：可以隨意修改規則！</div>` },
+    { title: "3. 規則修改", content: `<p class="mb-4 text-sm text-gray-400">霸王可以從以下兩項中擇一修改：</p><div class="grid grid-cols-2 gap-4 mb-4"><div class="bg-gray-900 p-2 rounded border border-blue-500"><h4 class="font-bold text-blue-400 mb-2">修改最大數字</h4><div class="text-xs">例如指定 <span class="text-white font-bold">7</span> 最大</div><div class="mt-2 flex justify-center gap-1 text-xs opacity-70"><span>8</span>&lt;<span>9</span>...&lt;<span>2</span>...&lt;<span>6</span>&lt;<span class="text-yellow-400 font-bold border border-yellow-400 rounded px-1">7</span></div></div><div class="bg-gray-900 p-2 rounded border border-red-500"><h4 class="font-bold text-red-400 mb-2">修改最大花色</h4><div class="text-xs">例如指定 <span class="text-red-500 font-bold">♥</span> 最大</div><div class="mt-2 text-2xl">♦ &lt; ♣ &lt; ♠ &lt; <span class="text-red-500 drop-shadow-[0_0_5px_red]">♥</span></div></div></div><p class="text-sm text-green-400">你的手牌會根據新規則自動重新排序！</p>` },
+    { title: "4. 策略與獲勝", content: `<p class="mb-4">因為規則隨時會變，手中的爛牌可能下一秒就變成王牌！</p><ul class="text-left list-decimal pl-6 space-y-2 text-gray-300"><li>不要急著把小牌打掉，留著等規則改變。</li><li>努力爭奪霸王權，將規則改成對自己有利的樣子。</li><li>善用左上角的 <span class="text-purple-400 font-bold">✨ 神諭</span> 功能來獲得建議。</li></ul><p class="mt-6 text-xl font-bold text-yellow-500">準備好稱霸了嗎？</p>` }
+];
+function openTutorial() { tutorialStep = 0; document.getElementById('tutorial-modal').classList.remove('hidden'); renderTutorialStep(); }
+function closeTutorial() { document.getElementById('tutorial-modal').classList.add('hidden'); }
+function nextTutorialStep() { if (tutorialStep < tutorialSteps.length - 1) { tutorialStep++; renderTutorialStep(); } else { closeTutorial(); showDifficultyModal('single'); } }
+function prevTutorialStep() { if (tutorialStep > 0) { tutorialStep--; renderTutorialStep(); } }
+function renderTutorialStep() {
+    const step = tutorialSteps[tutorialStep];
+    document.getElementById('tutorial-content').innerHTML = `<h3 class="text-2xl font-bold text-yellow-500 mb-6 font-['Cinzel_Decorative']">${step.title}</h3><div class="text-gray-200">${step.content}</div>`;
+    document.getElementById('tut-dots').innerHTML = tutorialSteps.map((_, i) => `<div class="w-2 h-2 rounded-full ${i === tutorialStep ? 'bg-yellow-500' : 'bg-gray-600'}"></div>`).join('');
+    document.getElementById('tut-prev').style.visibility = tutorialStep === 0 ? 'hidden' : 'visible';
+    const nextBtn = document.getElementById('tut-next');
+    nextBtn.innerText = tutorialStep === tutorialSteps.length - 1 ? '開始練習' : '下一步';
+    if (tutorialStep === tutorialSteps.length - 1) { nextBtn.classList.add('bg-green-700', 'text-green-200'); nextBtn.classList.remove('royal-btn'); } else { nextBtn.classList.remove('bg-green-700', 'text-green-200'); nextBtn.classList.add('royal-btn'); }
+}
+
+function showDifficultyModal(action) {
+    pendingAction = action;
+    document.getElementById('difficulty-modal').classList.remove('hidden');
+}
+function closeDifficultyModal() {
+    document.getElementById('difficulty-modal').classList.add('hidden');
+    pendingAction = null;
+}
+function selectDifficulty(level) {
+    selectedDifficulty = level;
+    const action = pendingAction;
+    closeDifficultyModal();
+    if (action === 'single') { enterLobby('single'); } 
+    else if (action === 'multi') { enterLobby('multi'); } 
+    else if (action === 'create_room') { createRoom(); }
+}
+
+// AI Brain
+function getBestMove(hand, lastPlay, isFirstTurn, rules, diff) {
+    const allMoves = getAllValidMoves(hand, lastPlay, isFirstTurn);
+    if (allMoves.length === 0) return null;
+    if (diff === 0) { return allMoves[Math.floor(Math.random() * allMoves.length)]; } 
+    else if (diff === 1) { return allMoves[0]; } 
+    else { 
+        if (!lastPlay) {
+             const five = allMoves.find(m => m.pattern.tier);
+             if (five) return five;
+             const pair = allMoves.find(m => m.pattern.type === 'pair');
+             if (pair) return pair;
+        }
+        return allMoves[0]; 
+    }
+}
+function getBestRules(hand, diff) {
+    const rCounts = {}, sCounts = {};
+    hand.forEach(c => { rCounts[c.rankIndex] = (rCounts[c.rankIndex]||0)+1; sCounts[c.suit] = (sCounts[c.suit]||0)+1; });
+    let bestR = 12, maxR = 0;
+    for(let r in rCounts) if(rCounts[r] > maxR) { maxR = rCounts[r]; bestR = parseInt(r); }
+    let bestS = 3, maxS = 0;
+    for(let s in sCounts) if(sCounts[s] > maxS) { maxS = sCounts[s]; bestS = parseInt(s); }
+    return { rank: bestR, suit: bestS };
+}
+function getAllValidMoves(hand, lastPlay, isFirstTurn) {
+    let moves = [];
+    if (isFirstTurn) {
+        const c3 = hand.find(c => c.isClub3);
+        if (c3) { moves.push({ cards: [c3], pattern: {type:'single', value:c3.power, maxCard:c3} }); }
+        return moves;
+    }
+    if (!lastPlay) {
+        hand.forEach(c => moves.push({ cards:[c], pattern:{type:'single', value:c.power, maxCard:c} }));
+        for(let i=0; i<hand.length-1; i++) {
+            if (hand[i].rankIndex === hand[i+1].rankIndex) {
+                moves.push({ cards:[hand[i], hand[i+1]], pattern:{type:'pair', value:hand[i+1].power, maxCard:hand[i+1]} });
+            }
+        }
+    } else {
+        if (lastPlay.pattern === 'single') {
+            hand.filter(c => c.power > lastPlay.value).forEach(c => moves.push({ cards:[c], pattern:{type:'single', value:c.power, maxCard:c} }));
+        } else if (lastPlay.pattern === 'pair') {
+            for(let i=0; i<hand.length-1; i++) {
+                if (hand[i].rankIndex === hand[i+1].rankIndex) {
+                    let pVal = hand[i+1].power;
+                    if (pVal > lastPlay.value) { moves.push({ cards:[hand[i], hand[i+1]], pattern:{type:'pair', value:pVal, maxCard:hand[i+1]} }); }
+                }
+            }
+        }
+    }
+    return moves;
+}
+
+// Global Functions
+function enterLobby(mode) {
+    if (mode === 'single') startSinglePlayer();
+    else {
+        ui.coverScreen.classList.add('hidden');
+        ui.lobbyScreen.classList.remove('hidden');
+        ui.lobbyMain.classList.remove('hidden');
+        ui.lobbyWaiting.classList.add('hidden');
+        isMultiplayer = true;
+    }
+}
+function exitLobby() {
+    if (unsubscribeRoom) unsubscribeRoom();
+    currentRoomId = null;
+    ui.lobbyScreen.classList.add('hidden');
+    ui.coverScreen.classList.remove('hidden');
+}
+function showExitModal() { document.getElementById('exit-modal').classList.remove('hidden'); }
+function closeExitModal() { document.getElementById('exit-modal').classList.add('hidden'); }
+function confirmExit() { location.reload(); }
+
+async function createRoom() {
+    if (!myUid) return;
+    const roomId = Math.floor(1000 + Math.random() * 9000).toString();
+    currentRoomId = roomId;
+    isHost = true;
+    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', roomId);
+    await setDoc(roomRef, {
+        hostId: myUid, status: 'waiting', difficulty: selectedDifficulty, 
+        players: [{ uid: myUid, name: 'Player 1', isBot: false, hand: [] }],
+        currentRules: { rank: 12, suit: 3 }, currentPlayer: 0, lastPlay: null, passCount: 0, isFirstTurn: true, deck: [], history: [] 
+    });
+    listenToRoom(roomId);
+}
+
+async function joinRoom() {
+    if (!myUid) return;
+    const roomId = ui.roomIdInput.value.trim();
+    if (roomId.length !== 4) return alert("請輸入4位數房號");
+    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', roomId);
+    const snap = await getDoc(roomRef);
+    if (!snap.exists()) return alert("房間不存在");
+    const data = snap.data();
+    if (data.status !== 'waiting') return alert("遊戲已開始");
+    if (data.players.length >= 4) return alert("房間已滿");
+    const newPlayer = { uid: myUid, name: `Player ${data.players.length + 1}`, isBot: false, hand: [] };
+    await updateDoc(roomRef, { players: arrayUnion(newPlayer) });
+    currentRoomId = roomId;
+    isHost = false;
+    listenToRoom(roomId);
+}
+
+async function addBot() {
+    if (!isHost || !currentRoomId) return;
+    if (gameData.players.length >= 4) return alert("人數已滿");
+    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
+    const bot = { uid: 'bot-' + Date.now(), name: `Bot ${gameData.players.length + 1}`, isBot: true, hand: [] };
+    await updateDoc(roomRef, { players: arrayUnion(bot) });
+}
+
+async function startMultiplayerGame() {
+    if (!isHost || !currentRoomId) return;
+    if (gameData.players.length < 2) return alert("至少需要2名玩家");
+    const deck = createDeck();
+    const players = [...gameData.players];
+    for (let i = 0; i < players.length; i++) players[i].hand = deck.slice(i*13, (i+1)*13);
+    let starter = 0;
+    for(let i=0; i<players.length; i++) if (players[i].hand.some(c => c.suit===1 && c.rankIndex===0)) { starter = i; break; }
+    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
+    await updateDoc(roomRef, { status: 'playing', players: players, currentPlayer: starter, isFirstTurn: true, currentRules: { rank: 12, suit: 3 }, history: ["遊戲開始！"] });
+}
+
+function setMode(mode) {
+    selectedMode = mode;
+    if (mode === 'rank') {
+        ui.modeRankBtn.classList.add('active'); ui.modeSuitBtn.classList.remove('active');
+        ui.panelRank.classList.remove('hidden'); ui.panelSuit.classList.add('hidden');
+    } else {
+        ui.modeRankBtn.classList.remove('active'); ui.modeSuitBtn.classList.add('active');
+        ui.panelRank.classList.add('hidden'); ui.panelSuit.classList.remove('hidden');
+    }
+    highlightRuleSelections();
+}
+
+function closeHelp() { ui.helpModal.classList.add('hidden'); }
+function openHelp() {
+    let rankHtml = '';
+    for(let i=1; i<=13; i++) { let idx = (bossRankIndex + i) % 13; let isBoss = idx === bossRankIndex;
+    rankHtml += `<span class="rank-seq-item ${isBoss ? 'boss' : ''}">${RANKS[idx]}</span>`; if (i < 13) rankHtml += ' <span class="text-gray-500">&lt;</span> '; }
+    ui.helpRankOrder.innerHTML = rankHtml;
+    let suitHtml = ''; let standardSuits = [0,1,2,3];
+    let others = standardSuits.filter(s => s !== bossSuitIndex); others.push(bossSuitIndex); 
+    others.forEach((sIdx, i) => { let isBoss = sIdx === bossSuitIndex; let color = (sIdx===0||sIdx===2) ? 'text-[#ff4d4d]' : 'text-[#a0aec0]'; if(isBoss) color = 'text-blue-400 font-bold underline'; suitHtml += `<span class="${color}">${SUITS[sIdx]}</span>`; if(i < 3) suitHtml += ' <span class="text-gray-600 text-sm">&lt;</span> '; });
+    ui.helpSuitOrder.innerHTML = suitHtml;
+    ui.helpModal.classList.remove('hidden');
+}
+function toggleHistory() { const panel = document.getElementById('history-panel'); const icon = document.getElementById('hist-toggle-icon'); panel.classList.toggle('minimized');
+    if (panel.classList.contains('minimized')) { icon.innerText = '▲'; } else { icon.innerText = '▼'; const content = document.getElementById('history-content'); content.scrollTop = content.scrollHeight; } 
+}
+function playEndGameAnimation(winnerIdx, myIdx) { const isWinner = (winnerIdx === myIdx); const text = isWinner ? "VICTORY" : "DEFEAT";
+    const overlay = document.getElementById('anim-overlay'); overlay.innerHTML = `<div class="anim-text ${isWinner?'win':'lose'}">${text}</div>`; for (let i = 0; i < 4; i++) { let slot = (i - myIdx + 4) % 4;
+    let el = null; if (slot === 0) el = document.getElementById('player-bottom'); else if (slot === 1) el = document.getElementById('player-right');
+    else if (slot === 2) el = document.getElementById('player-top'); else if (slot === 3) el = document.getElementById('player-left');
+    if (el && !el.classList.contains('hidden')) { if (i === winnerIdx) { el.classList.add('winner-anim'); } else { el.classList.add('loser-anim'); } } } 
+}
+
+// ✅ 修正：合併後的 window.onload，只留這一個
+window.onload = async function() {
+    initUI();
+    
+    // 呼叫新功能
+    setRandomBackground(); // 設定隨機背景
+    initVisitorCounter();  // 啟動計數器
+
+    try { 
+        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) await signInWithCustomToken(auth, __initial_auth_token); 
+        else await signInAnonymously(auth);
+    } catch (e) { console.error("Auth error:", e); }
+    onAuthStateChanged(auth, (user) => { if (user) myUid = user.uid; });
+    window.addEventListener('beforeunload', handleDisconnect);
+};
+
+// --- 以下是其他遊戲邏輯函式，請保持原樣 ---
+
+async function handleDisconnect() { if (!currentRoomId || !isMultiplayer) return;
+    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
+    if (gameData && gameData.status === 'playing') { updateDoc(roomRef, { status: 'aborted' }).catch(()=>{}); } 
+}
+
+function initUI() {
+    ui = {
+        coverScreen: document.getElementById('cover-screen'), lobbyScreen: document.getElementById('lobby-screen'), lobbyMain: document.getElementById('lobby-main'), lobbyWaiting: document.getElementById('lobby-waiting'),
+        roomIdDisplay: document.getElementById('room-id-display'), playerList: document.getElementById('player-list'), hostControls: document.getElementById('host-controls'), guestWaiting: document.getElementById('guest-waiting'), roomIdInput: document.getElementById('room-id-input'),
+        gameHUD: document.getElementById('game-hud'), tableArea: document.getElementById('table-area'), historyPanel: document.getElementById('history-panel'), historyContent: document.getElementById('history-content'),
+        playerAreas: [document.getElementById('player-bottom'), document.getElementById('player-right'), document.getElementById('player-top'), document.getElementById('player-left')],
+        msg: document.getElementById('my-message'), table: document.getElementById('table-cards'), myHand: document.getElementById('my-hand'), ruleDisplay: document.getElementById('current-rule-text'), gameStatus: document.getElementById('game-status'),
+        ruleModal: document.getElementById('rule-modal'), rankSelector: document.getElementById('rank-selector'), suitSelector: document.getElementById('suit-selector'), lastAction: document.getElementById('last-action-text'),
+        resultModal: document.getElementById('result-modal'), resultMsg: document.getElementById('result-message'),
+        btnPlay: document.getElementById('btn-play'), btnPass: document.getElementById('btn-pass'), btnOpenHelp: document.getElementById('btn-open-help'),
+        helpModal: document.getElementById('help-modal'), helpRankOrder: document.getElementById('help-rank-order'), helpSuitOrder: document.getElementById('help-suit-order'),
+        modeRankBtn: document.getElementById('mode-rank'), modeSuitBtn: document.getElementById('mode-suit'), panelRank: document.getElementById('panel-rank'), panelSuit: document.getElementById('panel-suit'),
+        handRight: document.getElementById('hand-right'), handTop: document.getElementById('hand-top'), handLeft: document.getElementById('hand-left'),
+        cntRight: document.querySelector('#player-right .count'), cntTop: document.querySelector('#player-top .count'), cntLeft: document.querySelector('#player-left .count'),
+        topControls: document.getElementById('top-controls')
+    };
+    window.enterLobby = enterLobby; window.exitLobby = exitLobby; window.createRoom = createRoom; window.joinRoom = joinRoom; window.addBot = addBot; window.startMultiplayerGame = startMultiplayerGame;
+    window.setMode = setMode; window.closeHelp = closeHelp; window.showExitModal = showExitModal; window.closeExitModal = closeExitModal; window.confirmExit = confirmExit;
+    window.openHelp = openHelp; window.toggleHistory = toggleHistory; window.askOracle = askOracle;
+    window.openTutorial = openTutorial; window.closeTutorial = closeTutorial; window.nextTutorialStep = nextTutorialStep; window.prevTutorialStep = prevTutorialStep;
+    window.showDifficultyModal = showDifficultyModal; window.closeDifficultyModal = closeDifficultyModal; window.selectDifficulty = selectDifficulty;
+    
+    ui.btnPlay.onclick = tryPlayCard; ui.btnPass.onclick = playerPass; document.getElementById('btn-confirm-rule').onclick = confirmRuleChange;
+    initRuleSelectors();
+}
+
+function initRuleSelectors() {
+    ui.rankSelector.innerHTML = ''; RANKS.forEach((r, idx) => { const btn = document.createElement('button'); btn.className = `p-2 bg-[#1a1a1a] hover:bg-[#333] rounded text-[#8b6f47] font-bold border border-[#4a3f35] shadow-inner`; btn.innerText = r; btn.onclick = () => selectRuleRank(idx); ui.rankSelector.appendChild(btn); });
+    ui.suitSelector.innerHTML = ''; SUITS.forEach((s, idx) => { const btn = document.createElement('button'); btn.className = `p-3 bg-[#1a1a1a] rounded text-2xl ${idx%2===0 ? 'text-[#ff4d4d]':'text-[#ccc]'} border-2 border-[#4a3f35] hover:border-[#d4af37] shadow-inner`; btn.innerText = s; btn.onclick = () => selectRuleSuit(idx); ui.suitSelector.appendChild(btn); });
+}
+
+function listenToRoom(roomId) {
+    ui.lobbyMain.classList.add('hidden'); ui.lobbyWaiting.classList.remove('hidden'); ui.roomIdDisplay.innerText = roomId;
+    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', roomId);
+    unsubscribeRoom = onSnapshot(roomRef, (docSnap) => {
+        if (!docSnap.exists()) return;
+        const data = docSnap.data(); gameData = data; renderLobby(data);
+        if (data.status === 'playing' || data.status === 'finished' || data.status === 'selecting_rules' || data.status === 'aborted') { ui.lobbyScreen.classList.add('hidden'); renderGameMultiplayer(data); }
+    });
+}
+
+function renderLobby(data) {
+    ui.playerList.innerHTML = data.players.map(p => `<div class="player-list-item"><span>${p.name} ${p.isBot ? '(BOT)' : ''} ${p.uid === myUid ? '(你)' : ''}</span>${p.uid === data.hostId ? '👑' : '👤'}</div>`).join('');
+    document.getElementById('room-diff-display').innerText = `難度: ${DIFF_LABELS[data.difficulty || 1]}`;
+    if (isHost) { ui.hostControls.classList.remove('hidden'); ui.guestWaiting.classList.add('hidden'); } else { ui.hostControls.classList.add('hidden'); ui.guestWaiting.classList.remove('hidden'); }
+}
+
+function renderGameMultiplayer(data) {
+    if (!isMultiplayer) return;
+    if (data.status === 'aborted') { ui.coverScreen.classList.add('hidden'); ui.gameHUD.classList.add('hidden'); ui.tableArea.classList.add('hidden'); ui.topControls.classList.add('hidden'); ui.historyPanel.classList.add('hidden');
+    ui.playerAreas.forEach(el => el.classList.add('hidden')); ui.resultModal.classList.remove('hidden'); ui.resultMsg.innerText = "有玩家斷線或離開，遊戲強制結束。"; document.getElementById('result-title').innerText = "遊戲終止"; return; }
+    ui.coverScreen.classList.add('hidden'); ui.gameHUD.classList.remove('hidden'); ui.tableArea.classList.remove('hidden'); ui.topControls.classList.remove('hidden'); ui.historyPanel.classList.remove('hidden');
+    ui.playerAreas.forEach(el => el.classList.remove('hidden'));
+    bossRankIndex = data.currentRules.rank; bossSuitIndex = data.currentRules.suit; applyRulesUI(bossRankIndex, bossSuitIndex, true);
+    renderHistory(data.history || []);
+    const myIndex = data.players.findIndex(p => p.uid === myUid); const totalP = data.players.length;
+    const getRel = (offset) => (myIndex + offset) % totalP;
+    renderMyHand(data.players[myIndex].hand);
+    if (totalP >= 2) renderOpponent(1, data.players[getRel(1)], 'player-right');
+    if (totalP >= 3) renderOpponent(2, data.players[getRel(2)], 'player-top'); if (totalP >= 4) renderOpponent(3, data.players[getRel(3)], 'player-left'); if (totalP < 4) document.getElementById('player-left').classList.add('hidden');
+    if (totalP < 3) document.getElementById('player-top').classList.add('hidden');
+    if (data.lastPlay) { ui.lastAction.innerText = `${data.players[data.lastPlay.player].name} 出牌`; renderTable(data.lastPlay.cards); } else { ui.lastAction.innerText = "";
+    ui.table.innerHTML = ""; }
+    const curP = data.players[data.currentPlayer];
+    if (data.status === 'finished') { ui.gameStatus.innerText = "遊戲結束";
+    if (!hasShownFinishAnim) { playEndGameAnimation(data.currentPlayer, myIndex); hasShownFinishAnim = true; setTimeout(() => { ui.resultModal.classList.remove('hidden'); document.getElementById('result-title').innerText = "遊戲結束"; ui.resultMsg.innerText = `贏家是 ${curP.name}！`; }, 3000); } } else { ui.gameStatus.innerText = `輪到: ${curP.name}`; if (data.currentPlayer === myIndex) { let msg = data.lastPlay ?
+    "輪到你了！請出牌" : "輪到你了！請自由出牌"; if (data.isFirstTurn) msg = "遊戲開始！請出包含梅花3的牌型"; ui.msg.innerText = msg; updateButtonsMulti(data, myIndex); } else { ui.msg.innerText = "";
+    ui.btnPlay.disabled = true; ui.btnPass.disabled = true; } }
+    if (isHost && (data.status === 'playing' || data.status === 'selecting_rules')) { const currentPlayerObj = data.players[data.currentPlayer];
+    if (currentPlayerObj.isBot) { if (!window.botTimeout) window.botTimeout = setTimeout(() => runHostBotLogic(data), 1500); } else window.botTimeout = null; }
+}
+function renderHistory(hist) { ui.historyContent.innerHTML = hist.map(item => `<div class="history-item">${item}</div>`).join(''); ui.historyContent.scrollTop = ui.historyContent.scrollHeight; }
+function cardToHTML(c) { const r = RANKS[c.rankIndex];
+const s = SUITS[c.suit]; const colorClass = (c.suit===0 || c.suit===2) ? 'hist-red' : 'hist-black'; return `<span class="${colorClass}">${s}${r}</span>`; }
+
+function startSinglePlayer() {
+    isMultiplayer = false; hasShownFinishAnim = false;
+    ui.coverScreen.classList.add('hidden'); ui.gameHUD.classList.remove('hidden'); ui.tableArea.classList.remove('hidden'); ui.topControls.classList.remove('hidden'); ui.historyPanel.classList.remove('hidden'); ui.playerAreas.forEach(el => el.classList.remove('hidden'));
+    deal(); renderOpponents(); bossRankIndex = 12; bossSuitIndex = 3; applyRules(bossRankIndex, bossSuitIndex, true);
+    let starter = 0;
+    for(let p=0; p<4; p++) if(players[p].some(c => c.isClub3)) { starter = p; break; }
+    currentPlayer = starter;
+    isFirstTurn = true; passCount = 0; lastPlay = null; gameActive = true; gameHistory = ["遊戲開始！"]; renderHistory(gameHistory); ui.lastAction.innerText = "";
+    ui.table.innerHTML = "";
+    nextTurn();
+}
+let deck = []; let players = [[], [], [], []]; let currentPlayer = -1;
+let lastPlay = null; let passCount = 0; let isFirstTurn = true; let gameActive = false;
+class Card { constructor(suit, rankIndex) { this.suit=suit; this.rankIndex=rankIndex; this.id=`${suit}-${rankIndex}`; } get displayRank() { return RANKS[this.rankIndex]; } get displaySuit() { return SUITS[this.suit]; } get isRed() { return this.suit===0 || this.suit===2; } get isClub3() { return this.suit===1 && this.rankIndex===0; } get power() { let adj = (this.rankIndex - (bossRankIndex + 1) + 13) % 13; let sP = this.suit; if (this.suit === bossSuitIndex) sP = 4; return adj * 10 + sP; } }
+function createDeck() { let d=[]; for(let s=0;s<4;s++)for(let r=0;r<13;r++)d.push({suit:s,rankIndex:r}); for(let i=d.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];} return d; }
+function deal() { deck = [];
+for (let s = 0; s < 4; s++) for (let r = 0; r < 13; r++) deck.push(new Card(s, r));
+for (let i = deck.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1));
+[deck[i], deck[j]] = [deck[j], deck[i]]; } players = [[], [], [], []];
+for (let i = 0; i < 52; i++) players[i % 4].push(deck[i]); players.forEach(h => sortHand(h)); }
+function toCard(c) { return new Card(c.suit, c.rankIndex); }
+function sortHand(h) { h.sort((a,b)=>a.power-b.power); }
+function getHandPattern(cards) { const sorted = [...cards].sort((a,b)=>a.power-b.power);
+const len = sorted.length; if (len===1) return {type:'single', value:sorted[0].power, maxCard:sorted[0]}; if (len===2) { if (sorted[0].rankIndex===sorted[1].rankIndex) return {type:'pair', value:sorted[1].power, maxCard:sorted[1]}; return null; } if (len===5) { const isFlush=sorted.every(c=>c.suit===sorted[0].suit); const pRanks=sorted.map(c=>Math.floor(c.power/10)); let isStraight=true; for(let i=0;i<4;i++) if(pRanks[i+1]!==pRanks[i]+1) isStraight=false; const c={}; sorted.forEach(x=>c[x.rankIndex]=(c[x.rankIndex]||0)+1);
+const v=Object.values(c); const is4=v.includes(4), isFH=v.includes(3)&&v.includes(2); if(isStraight&&isFlush) return {type:'straight-flush', value:sorted[4].power, tier:5}; if(is4) { let r=parseInt(Object.keys(c).find(k=>c[k]===4)); let rep=sorted.find(x=>x.rankIndex===r); return {type:'four-of-a-kind', value:rep.power, tier:4}; } if(isFH) { let r=parseInt(Object.keys(c).find(k=>c[k]===3)); let rep=sorted.find(x=>x.rankIndex===r); return {type:'full-house', value:rep.power, tier:3}; } if(isFlush) return {type:'flush', value:sorted[4].power, tier:2};
+if(isStraight) return {type:'straight', value:sorted[4].power, tier:1}; return null; } return null; }
+function renderHand() { ui.myHand.innerHTML = ''; sortHand(players[0]);
+players[0].forEach((card) => { const el = document.createElement('div'); el.className = `card ${card.isRed ? 'red' : 'black'} ${selectedIndices.has(card.id) ? 'selected' : ''}`; el.innerHTML = `<div>${card.displayRank}</div><div style="font-size:1.5rem;text-align:center;">${card.displaySuit}</div><div style="transform:rotate(180deg);">${card.displayRank}</div>`; el.onclick = () => toggleSelect(card.id); ui.myHand.appendChild(el); });
+updateButtons(); }
+function renderOpponents() { ui.cntRight.innerText = players[1].length; ui.cntTop.innerText = players[2].length; ui.cntLeft.innerText = players[3].length;
+[1, 2, 3].forEach(pIdx => { const container = pIdx === 1 ? ui.handRight : pIdx === 2 ? ui.handTop : ui.handLeft; container.innerHTML = ''; for(let i=0; i<players[pIdx].length; i++) { const back = document.createElement('div'); back.className = 'card-back'; container.appendChild(back); } }); }
+function renderTable(c) { ui.table.innerHTML=''; let cc=c[0] instanceof Card?c:c.map(toCard);
+cc.forEach(x=>{ const el=document.createElement('div'); el.className=`card ${x.isRed?'red':'black'}`; el.innerHTML=`<div>${x.displayRank}</div><div style="font-size:1.5rem;text-align:center;">${x.displaySuit}</div><div style="transform:rotate(180deg);">${x.displayRank}</div>`; ui.table.appendChild(el); }); }
+function updateButtonsMulti(d, i) { if(d.status==='selecting_rules'){ ui.msg.innerText="你是霸王！請修改規則"; if(i===d.currentPlayer){ ui.ruleModal.classList.remove('hidden'); setMode('rank');
+} else { ui.msg.innerText=`${d.players[d.currentPlayer].name} 正在修改規則...`; } ui.btnPlay.disabled=true; ui.btnPass.disabled=true; return; } const h=d.players[i].hand.map(toCard); const sel=h.filter(c=>selectedIndices.has(c.id)); const p=getHandPattern(sel); let can=false;
+if(d.isFirstTurn){ if(!sel.some(c=>c.isClub3)){ ui.btnPlay.disabled=true; return; } } if(p){ if(!d.lastPlay) can=true; else { if(p.tier&&d.lastPlay.tier){ if(p.tier>d.lastPlay.tier||(p.tier===d.lastPlay.tier&&p.value>d.lastPlay.value)) can=true; } else if(p.type===d.lastPlay.pattern && p.value>d.lastPlay.value) can=true; } } ui.btnPlay.disabled=!can; ui.btnPass.disabled=(!d.lastPlay||d.isFirstTurn); }
+async function confirmRuleChange() { let nr=bossRankIndex, ns=bossSuitIndex; if(selectedMode==='rank') nr=tempRuleRank; else ns=tempRuleSuit; callGeminiCommentary('rule_change', {rank: nr, suit: ns});
+if(isMultiplayer) { const r=doc(db,'artifacts',appId,'public','data','rooms',currentRoomId); await updateDoc(r, { currentRules:{rank:nr, suit:ns}, status:'playing', history: arrayUnion(`霸王修改了規則！`) }); } else { applyRules(nr, ns); gameHistory.push(`霸王修改了規則！`); renderHistory(gameHistory); } ui.ruleModal.classList.add('hidden'); }
+function nextTurn() { for(let p=0;p<4;p++) if(players[p].length===0){ endGame(p); return; } ui.gameStatus.innerText = currentPlayer===0?"輪到: 你":`輪到: ${getPlayerName(currentPlayer)}`; renderHand(); renderOpponents(); if(lastPlay&&passCount>=3){ lastPlay=null;
+passCount=0; ui.lastAction.innerText="重新出牌 - 贏家制定規則！"; ui.table.innerHTML=''; promptDictatorRules(); return; } if(currentPlayer===0){ let msg=lastPlay?"輪到你了！":"輪到你了！自由出牌"; if(isFirstTurn) msg="請出梅花3"; ui.msg.innerText=msg; selectedIndices.clear(); updateButtons(); } else { ui.msg.innerText="";
+setTimeout(aiTurn, 1000); } }
+function applyRulesUI(r, s, silent=false) { ui.ruleDisplay.innerHTML = `最大: <span class="text-yellow-400 text-xl font-bold">${RANKS[r]}</span> / <span class="text-blue-400 text-xl font-bold">${SUITS[s]}</span>`;
+if(!silent) ui.lastAction.innerText = "規則變更！"; }
+function applyRules(r, s, silent) { bossRankIndex = r; bossSuitIndex = s; applyRulesUI(r,s,silent); }
+function toggleSelect(id) { if(selectedIndices.has(id)) selectedIndices.delete(id); else if(selectedIndices.size<5) selectedIndices.add(id); if(isMultiplayer){ renderMyHand(gameData.players.find(p=>p.uid===myUid).hand); const idx=gameData.players.findIndex(p=>p.uid===myUid); if(gameData.currentPlayer===idx) updateButtonsMulti(gameData, idx); } else { renderHand(); } }
+function promptDictatorRules() { tempRuleRank=bossRankIndex; tempRuleSuit=bossSuitIndex; if(currentPlayer===0){ ui.ruleModal.classList.remove('hidden'); setMode('rank'); highlightRuleSelections(); } else { const rName=getPlayerName(currentPlayer); ui.lastAction.innerText=`${rName} 正在思考新規則...`;
+setTimeout(()=>{ 
+    const bestRules = getBestRules(players[currentPlayer], selectedDifficulty);
+    applyRules(bestRules.rank, bestRules.suit); gameHistory.push(`${rName} 修改了規則`); renderHistory(gameHistory); 
+    callGeminiCommentary('rule_change', {rank: bestRules.rank, suit: bestRules.suit});
+    setTimeout(aiTurn, 800); }, 1500); } }
+function highlightRuleSelections() { Array.from(ui.rankSelector.children).forEach((btn,idx)=>{ if(idx===tempRuleRank) btn.classList.add('border-[#d4af37]','bg-[#111]','text-[#d4af37]'); else btn.classList.remove('border-[#d4af37]','bg-[#111]','text-[#d4af37]'); }); Array.from(ui.suitSelector.children).forEach((btn,idx)=>{ if(idx===tempRuleSuit) btn.classList.add('border-[#d4af37]','text-[#d4af37]'); else btn.classList.remove('border-[#d4af37]','text-[#d4af37]'); }); }
+function selectRuleRank(i) { tempRuleRank=i; highlightRuleSelections(); }
+function selectRuleSuit(i) { tempRuleSuit=i; highlightRuleSelections(); }
+</script>
