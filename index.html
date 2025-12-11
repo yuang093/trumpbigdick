@@ -1017,3 +1017,206 @@ function highlightRuleSelections() { Array.from(ui.rankSelector.children).forEac
 function selectRuleRank(i) { tempRuleRank=i; highlightRuleSelections(); }
 function selectRuleSuit(i) { tempRuleSuit=i; highlightRuleSelections(); }
 </script>
+// --- 補回遺失的遊戲邏輯函式 (請貼在 script 的最後面) ---
+
+// AI 思考邏輯
+function aiTurn() { 
+    const hand = players[currentPlayer]; sortHand(hand);
+    const play = getBestMove(hand, lastPlay, isFirstTurn, {rank:bossRankIndex,suit:bossSuitIndex}, selectedDifficulty);
+    if (play) { 
+        if (isFirstTurn) isFirstTurn = false; 
+        play.pattern = getHandPattern(play.cards); 
+        executePlay(currentPlayer, play.cards, play.pattern);
+    } else { 
+        pass(); 
+    } 
+}
+
+// 玩家嘗試出牌 (按鈕觸發)
+async function tryPlayCard() { 
+    if (!isMultiplayer) { 
+        const cards = players[0].filter(c => selectedIndices.has(c.id)); 
+        const pattern = getHandPattern(cards);
+        if (pattern) { 
+            if (isFirstTurn) isFirstTurn = false; 
+            if (pattern.tier >= 4) { 
+                const cardStr = cards.map(c => `${SUITS[c.suit]}${RANKS[c.rankIndex]}`).join('');
+                callGeminiCommentary('big_play', {pattern: pattern.type, cards: cardStr}); 
+            } 
+            executePlay(0, cards, pattern); 
+            selectedIndices.clear(); 
+        } 
+        return; 
+    } 
+    // 多人模式邏輯
+    const myIdx = gameData.players.findIndex(p=>p.uid===myUid); 
+    if(gameData.currentPlayer!==myIdx) return;
+    const hand = gameData.players[myIdx].hand.map(toCard); 
+    const sel = hand.filter(c=>selectedIndices.has(c.id)); 
+    const pat = getHandPattern(sel);
+    if(pat) { 
+        if (pat.tier >= 4) { 
+            const cardStr = sel.map(c => `${SUITS[c.suit]}${RANKS[c.rankIndex]}`).join(''); 
+            callGeminiCommentary('big_play', {pattern: pat.type, cards: cardStr}); 
+        } 
+        renderTable(sel);
+        ui.lastAction.innerText = "出牌中..."; 
+        const optimisticHand = hand.filter(c => !selectedIndices.has(c.id)); 
+        renderMyHand(optimisticHand); 
+        ui.btnPlay.disabled = true; ui.btnPass.disabled = true;
+        const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId); 
+        const newHand = gameData.players[myIdx].hand.filter(c=>!selectedIndices.has(`${c.suit}-${c.rankIndex}`)); 
+        const newP = [...gameData.players];
+        newP[myIdx].hand = newHand; 
+        const logStr = `<span class="hist-name">${newP[myIdx].name}</span>: <span class="hist-cards">${sel.map(cardToHTML).join('')}</span>`; 
+        selectedIndices.clear();
+        if (newHand.length===0) { 
+            await updateDoc(roomRef, { players:newP, lastPlay:{player:myIdx, cards:sel.map(c=>({suit:c.suit,rankIndex:c.rankIndex})), pattern:pat.type, value:pat.value, tier:pat.tier}, status:'finished', currentPlayer:myIdx, history: arrayUnion(logStr) }); 
+            return;
+        } 
+        await updateDoc(roomRef, { players:newP, lastPlay:{player:myIdx, cards:sel.map(c=>({suit:c.suit,rankIndex:c.rankIndex})), pattern:pat.type, value:pat.value, tier:pat.tier}, currentPlayer:(myIdx+1)%newP.length, passCount:0, isFirstTurn:false, history: arrayUnion(logStr) }); 
+    } 
+}
+
+// 玩家跳過 (按鈕觸發)
+async function playerPass() { 
+    if (!isMultiplayer) { pass(); return; } 
+    ui.lastAction.innerText = "PASS (同步中...)"; ui.btnPlay.disabled = true;
+    ui.btnPass.disabled = true; 
+    const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId); 
+    const nextP = (gameData.currentPlayer+1)%gameData.players.length;
+    let npc = gameData.passCount+1; 
+    const logStr = `<span class="hist-name">${gameData.players[gameData.currentPlayer].name}</span>: <span class="hist-pass">PASS</span>`; 
+    if (npc >= gameData.players.length-1) { 
+        const win = gameData.lastPlay.player;
+        await updateDoc(roomRef, { currentPlayer:win, lastPlay:null, passCount:0, status:'selecting_rules', history: arrayUnion(logStr) });
+    } else { 
+        await updateDoc(roomRef, { currentPlayer:nextP, passCount:npc, history: arrayUnion(logStr) }); 
+    } 
+}
+
+// 執行出牌 (單人/邏輯共用)
+function executePlay(pIdx, cards, pattern) { 
+    players[pIdx] = players[pIdx].filter(c => !cards.includes(c));
+    lastPlay = { player: pIdx, cards: cards, pattern: pattern.type, value: pattern.value, tier: pattern.tier }; 
+    passCount = 0;
+    const pName = getPlayerName(pIdx); 
+    const logStr = `<span class="hist-name">${pName}</span>: <span class="hist-cards">${cards.map(cardToHTML).join('')}</span>`; 
+    gameHistory.push(logStr); renderHistory(gameHistory); renderTable(cards); ui.lastAction.innerText = `${pName} 出牌`;
+    currentPlayer = (currentPlayer + 1) % 4; nextTurn(); 
+}
+
+// 執行 PASS (單人)
+function pass() { 
+    const pName = getPlayerName(currentPlayer);
+    const logStr = `<span class="hist-name">${pName}</span>: <span class="hist-pass">PASS</span>`; 
+    gameHistory.push(logStr); renderHistory(gameHistory); ui.lastAction.innerText = `${pName} PASS`; passCount++;
+    currentPlayer = (currentPlayer + 1) % 4; nextTurn(); 
+}
+
+// 遊戲結束
+function endGame(winnerIdx) { 
+    gameActive = false; playEndGameAnimation(winnerIdx, 0);
+    setTimeout(() => { ui.resultModal.classList.remove('hidden'); ui.resultMsg.innerText = `贏家是 ${getPlayerName(winnerIdx)}！`; }, 3000);
+}
+
+// 取得玩家名稱
+function getPlayerName(i) { return i===0?"你":`電腦${i}`; }
+
+// 取得 AI 最佳出牌
+function getBestMove(hand, lastPlay, isFirstTurn, rules, diff) {
+    const allMoves = getAllValidMoves(hand, lastPlay, isFirstTurn);
+    if (allMoves.length === 0) return null;
+    if (diff === 0) { return allMoves[Math.floor(Math.random() * allMoves.length)]; } 
+    else if (diff === 1) { return allMoves[0]; } 
+    else { 
+        if (!lastPlay) {
+             const five = allMoves.find(m => m.pattern.tier);
+             if (five) return five;
+             const pair = allMoves.find(m => m.pattern.type === 'pair');
+             if (pair) return pair;
+        }
+        return allMoves[0]; 
+    }
+}
+
+// 取得 AI 最佳規則
+function getBestRules(hand, diff) {
+    const rCounts = {}, sCounts = {};
+    hand.forEach(c => { rCounts[c.rankIndex] = (rCounts[c.rankIndex]||0)+1; sCounts[c.suit] = (sCounts[c.suit]||0)+1; });
+    let bestR = 12, maxR = 0;
+    for(let r in rCounts) if(rCounts[r] > maxR) { maxR = rCounts[r]; bestR = parseInt(r); }
+    let bestS = 3, maxS = 0;
+    for(let s in sCounts) if(sCounts[s] > maxS) { maxS = sCounts[s]; bestS = parseInt(s); }
+    return { rank: bestR, suit: bestS };
+}
+
+// 取得所有合法牌型
+function getAllValidMoves(hand, lastPlay, isFirstTurn) {
+    let moves = [];
+    if (isFirstTurn) {
+        const c3 = hand.find(c => c.isClub3);
+        if (c3) { moves.push({ cards: [c3], pattern: {type:'single', value:c3.power, maxCard:c3} }); }
+        return moves;
+    }
+    if (!lastPlay) {
+        hand.forEach(c => moves.push({ cards:[c], pattern:{type:'single', value:c.power, maxCard:c} }));
+        for(let i=0; i<hand.length-1; i++) {
+            if (hand[i].rankIndex === hand[i+1].rankIndex) {
+                moves.push({ cards:[hand[i], hand[i+1]], pattern:{type:'pair', value:hand[i+1].power, maxCard:hand[i+1]} });
+            }
+        }
+    } else {
+        if (lastPlay.pattern === 'single') {
+            hand.filter(c => c.power > lastPlay.value).forEach(c => moves.push({ cards:[c], pattern:{type:'single', value:c.power, maxCard:c} }));
+        } else if (lastPlay.pattern === 'pair') {
+            for(let i=0; i<hand.length-1; i++) {
+                if (hand[i].rankIndex === hand[i+1].rankIndex) {
+                    let pVal = hand[i+1].power;
+                    if (pVal > lastPlay.value) { moves.push({ cards:[hand[i], hand[i+1]], pattern:{type:'pair', value:pVal, maxCard:hand[i+1]} }); }
+                }
+            }
+        }
+    }
+    return moves;
+}
+
+// 房主 AI 託管邏輯
+async function runHostBotLogic(data) { 
+    window.botTimeout = null; const botIdx = data.currentPlayer;
+    const hand = data.players[botIdx].hand.map(toCard); hand.sort((a,b)=>a.power-b.power); const roomRef = doc(db, 'artifacts', appId, 'public', 'data', 'rooms', currentRoomId);
+    const diff = data.difficulty || 1;
+    if(data.status==='selecting_rules') { 
+        const bestRules = getBestRules(hand, diff); 
+        callGeminiCommentary('rule_change', {rank: bestRules.rank, suit: bestRules.suit});
+        await updateDoc(roomRef, { currentRules:{rank:bestRules.rank, suit:bestRules.suit}, status:'playing', history: arrayUnion(`<span class="hist-name">${data.players[botIdx].name}</span> 修改了規則`) }); 
+        return; 
+    }
+    const play = getBestMove(hand, data.lastPlay, data.isFirstTurn, data.currentRules, diff);
+    if(play) { 
+        const newHand = data.players[botIdx].hand.filter(c=>!play.cards.some(pc=>pc.suit===c.suit&&pc.rankIndex===c.rankIndex)); 
+        const nextP = (botIdx+1)%data.players.length;
+        const logStr = `<span class="hist-name">${data.players[botIdx].name}</span>: <span class="hist-cards">${play.cards.map(toCard).map(cardToHTML).join('')}</span>`;
+        if(newHand.length===0){ 
+            await updateDoc(roomRef, { players:data.players.map((p,i)=>i===botIdx?{...p,hand:newHand}:p), status:'finished', currentPlayer:botIdx, history: arrayUnion(logStr) }); 
+            return; 
+        }
+        await updateDoc(roomRef, { players:data.players.map((p,i)=>i===botIdx?{...p,hand:newHand}:p), lastPlay:{player:botIdx, cards:play.cards.map(c=>({suit:c.suit,rankIndex:c.rankIndex})), pattern:play.pattern.type, value:play.pattern.value, tier:play.pattern.tier}, currentPlayer:nextP, passCount:0, isFirstTurn:false, history: arrayUnion(logStr) }); 
+    } else {
+        const nextP = (botIdx+1)%data.players.length; let npc = data.passCount+1;
+        const logStr = `<span class="hist-name">${data.players[botIdx].name}</span>: <span class="hist-pass">PASS</span>`;
+        if (npc>=data.players.length-1) await updateDoc(roomRef, { currentPlayer:data.lastPlay.player, lastPlay:null, passCount:0, status:'selecting_rules', history: arrayUnion(logStr) });
+        else await updateDoc(roomRef, { currentPlayer:nextP, passCount:npc, history: arrayUnion(logStr) }); 
+    } 
+}
+// 多人模式手牌渲染
+function renderMyHand(h) { 
+    ui.myHand.innerHTML=''; let hh=h.map(toCard);
+    hh.sort((a,b)=>a.power-b.power); 
+    hh.forEach(c=>{ 
+        const el=document.createElement('div'); 
+        el.className=`card ${c.isRed?'red':'black'} ${selectedIndices.has(c.id)?'selected':''}`; 
+        el.innerHTML=`<div>${c.displayRank}</div><div style="font-size:1.5rem;text-align:center;">${c.displaySuit}</div><div style="transform:rotate(180deg);">${c.displayRank}</div>`; 
+        el.onclick=()=>toggleSelect(c.id); ui.myHand.appendChild(el); 
+    }); 
+}
